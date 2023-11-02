@@ -34,6 +34,10 @@
                 <textarea id="writeTextArea"></textarea>
                 <button id="writeButton">Записать в файл</button>
             </div>
+            <div style="background-color: ren; width: 50%;">
+                <input type="file" id="imageFileSelector"; width=90%/>
+                <button id="imageReadButton">Читать файл</button>
+            </div>
         </div>
     </body>
     <script>
@@ -50,8 +54,7 @@
                 console.log(`Чтение файла ${file.name} успешно`)
                 console.log(file, contents)
             }
-            reader.onerror = function ()
-            {
+            reader.onerror = function (e) {
                 console.log(`Ошибка чтения файла ${file.name}`)
             }
             reader.readAsText(file);
@@ -66,10 +69,28 @@
             writeTextArea.value = ""
             var hiddenElement = document.createElement("a");
             hiddenElement.href = "data:text/plain;charset=utf-8,"+ encodeURI(text);
-            hiddenElement.target = "_blank";
             hiddenElement.download = fileNameArea.value
             hiddenElement.click()
             hiddenElement.remove()
+        });
+
+        var imageFileSelector = document.getElementById("imageFileSelector")
+        //Добавляем функции для считывания и скачивания файла картинок
+        document.getElementById("imageReadButton").addEventListener("click", function() {
+            var file = imageFileSelector.files[0];
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var hiddenElement = document.createElement("a");
+                hiddenElement.href = URL.createObjectURL(file) //создаём ссылку на скачивание ВАЖНО!!!
+                hiddenElement.download = file.name
+                hiddenElement.click()
+                hiddenElement.remove()
+                console.log(`Чтение файла ${file.name} успешно`)
+            }
+            reader.onerror = function (e) {
+                console.log(`Ошибка чтения файла ${file.name}`)
+            }
+            reader.readAsArrayBuffer(file)
         });
     </script>
 </html>
