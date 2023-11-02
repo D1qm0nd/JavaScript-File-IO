@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <Title>File IO</Title>
+    </head>
+    <style>
+        div {
+            display: flex; flex-flow: column nowrap; 
+            padding: 10px;
+            margin: 2px;
+        }
+        input {
+            margin: 10px;
+        }
+        button {
+            width: 50%;
+            align-self: center;
+        }
+        textarea {
+            margin: 10px 10px;
+            min-height: 100px;
+            resize: vertical;
+        }
+    </style>
+    <body>
+        <div style="align-items: center;">
+            <div style="background-color: green; width: 50%;">
+                <input type="file" id="fileSelector"; width=90%/>
+                <button id="readButton">Читать файл</button>
+                <textarea id="readTextArea"></textarea>
+            </div>
+            <div style="background-color: yellow;  width: 50%;">
+                <input type="text" id="fileNameInput" alt="Имя файла для сохранения"/>
+                <textarea id="writeTextArea"></textarea>
+                <button id="writeButton">Записать в файл</button>
+            </div>
+        </div>
+    </body>
+    <script>
+        var fileSelector = document.getElementById("fileSelector")
+        var readTextArea = document.getElementById('readTextArea');
+        //Добавляем функции для чтения файла
+        document.getElementById("readButton").addEventListener('click',function() {
+            
+            var file = fileSelector.files[0];
+            var reader = new FileReader()
+            reader.onload = function(e) {
+                var contents = e.target.result;
+                readTextArea.value = contents
+                console.log(`Чтение файла ${file.name} успешно`)
+                console.log(file, contents)
+            }
+            reader.onerror = function ()
+            {
+                console.log(`Ошибка чтения файла ${file.name}`)
+            }
+            reader.readAsText(file);
+        });
+
+        var fileNameArea = document.getElementById("fileNameInput"); 
+        var writeTextArea = document.getElementById('writeTextArea');
+        //Добавляем функции для записи и скачивания файла
+        document.getElementById("writeButton").addEventListener("click", function() {
+            let text = writeTextArea.value
+            console.log(text)
+            writeTextArea.value = ""
+            var hiddenElement = document.createElement("a");
+            hiddenElement.href = "data:text/plain;charset=utf-8,"+ encodeURI(text);
+            hiddenElement.target = "_blank";
+            hiddenElement.download = fileNameArea.value
+            hiddenElement.click()
+            hiddenElement.remove()
+        });
+    </script>
+</html>
