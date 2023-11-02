@@ -34,46 +34,57 @@
                 <textarea id="writeTextArea"></textarea>
                 <button id="writeButton">Записать в файл</button>
             </div>
-            <div style="background-color: ren; width: 50%;">
+            <div style="background-color: red; width: 50%;">
                 <input type="file" id="imageFileSelector"; width=90%/>
                 <button id="imageReadButton">Читать файл</button>
             </div>
         </div>
     </body>
     <script>
+
+        //Код элемента считывания текстового файла
         var fileSelector = document.getElementById("fileSelector")
         var readTextArea = document.getElementById('readTextArea');
         //Добавляем функции для чтения файла
         document.getElementById("readButton").addEventListener('click',function() {
-            
-            var file = fileSelector.files[0];
+            /*так как файлов можно передать несколько, 
+            а нам нужен лишь один, мы берём только первый элемент*/
+            var file = fileSelector.files[0]; 
             var reader = new FileReader()
+            //добавляем обработчик файла, после его прочтения
             reader.onload = function(e) {
                 var contents = e.target.result;
                 readTextArea.value = contents
                 console.log(`Чтение файла ${file.name} успешно`)
                 console.log(file, contents)
             }
+            //добавляем обработчик файла, после ошибки его прочтения
             reader.onerror = function (e) {
                 console.log(`Ошибка чтения файла ${file.name}`)
+            }
+            //добавляем обработчик отмены чтения файла
+            reader.onabort = function (e) {
+                console.log(`Отмена чтения файла ${file.name}`)
             }
             reader.readAsText(file);
         });
 
+        //Код элемента записи текстового файла
         var fileNameArea = document.getElementById("fileNameInput"); 
         var writeTextArea = document.getElementById('writeTextArea');
         //Добавляем функции для записи и скачивания файла
         document.getElementById("writeButton").addEventListener("click", function() {
             let text = writeTextArea.value
-            console.log(text)
             writeTextArea.value = ""
             var hiddenElement = document.createElement("a");
             hiddenElement.href = "data:text/plain;charset=utf-8,"+ encodeURI(text);
-            hiddenElement.download = fileNameArea.value
-            hiddenElement.click()
-            hiddenElement.remove()
+            //скачиваем файл с именем содержащимся в занчении элемента fileNameArea
+            hiddenElement.download = fileNameArea.value 
+            hiddenElement.click() //вызываем скачивание
+            hiddenElement.remove() //удаляем скрытый элемент
         });
 
+        //Код элемента считывания, записи и скачивания бинарного файла
         var imageFileSelector = document.getElementById("imageFileSelector")
         //Добавляем функции для считывания и скачивания файла картинок
         document.getElementById("imageReadButton").addEventListener("click", function() {
@@ -82,14 +93,20 @@
             reader.onload = function(e) {
                 var hiddenElement = document.createElement("a");
                 hiddenElement.href = URL.createObjectURL(file) //создаём ссылку на скачивание ВАЖНО!!!
-                hiddenElement.download = file.name
-                hiddenElement.click()
-                hiddenElement.remove()
+                hiddenElement.download = file.name //скачиваем файл с темже именем 
+                hiddenElement.click() //вызываем скачивание
+                hiddenElement.remove() //удаляем скрытый элемент
                 console.log(`Чтение файла ${file.name} успешно`)
             }
+            //добавляем обработчик файла, после ошибки его прочтения
             reader.onerror = function (e) {
                 console.log(`Ошибка чтения файла ${file.name}`)
             }
+            //добавляем обработчик отмены чтения файла
+            reader.onabort = function (e) {
+                console.log(`Отмена чтения файла ${file.name}`)
+            }
+            //добавляем обработчик файла, после его прочтения
             reader.readAsArrayBuffer(file)
         });
     </script>
